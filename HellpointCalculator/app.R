@@ -13,13 +13,48 @@ ui <- fluidPage(
                numericInput("characterForesightInput", "Character Foresight", value = "1")
         ),
         column(3,
-               p(strong("Weapon Base Damage")),
-               numericInput("physicalDamageInput", "Base Physical", value = "0"),
-               numericInput("energyDamageInput", "Base Energy", value = "0"),
-               numericInput("nihilDamageInput", "Base Nihil", value = "0"),
-               numericInput("inductionDamageInput", "Base Induction", value = "0"),
-               numericInput("entropyDamageInput", "Base Entropic", value = "0"),
-               numericInput("radiationDamageInput", "Base Radiation", value = "0")
+               p(strong("Weapon Information")),
+               selectInput("selectedWeapon", "Select Weapon", choices = c(
+                   "Pipe" = "pipe",
+                   "Shard" = "shard",
+                   "Column" = "column",
+                   "Infused Column" = "infusedColumn",
+                   "Bone Bat" = "boneBat",
+                   "Scary Scooper" = "scaryScooper",
+                   "Coffing Crusher" = "coffingCrusher",
+                   "Antiquated Glaive" = "antiquatedGlaive",
+                   "Officer Glaive" = "officerGlaive",
+                   "Officer Tule Glaive" = "officerTuleGlaive",
+                   "Heater Spear" = "heaterSpear",
+                   "Archon Spear" = "archonSpear",
+                   "Victim Poker" = "victimPoker",
+                   "Shredding Saber" = "shreddingSaber",
+                   "Wasteland Saber" = "wastelandSaber",
+                   "Rail Poignard" = "railPoignard",
+                   "Sewing Anlace" = "sewingAnlace",
+                   "Light Striker" = "lightStriker",
+                   "Prying Tool" = "pryingTool",
+                   "Tomahawk" = "tomahawk",
+                   "Lost Hatchet" = "lostHatchet",
+                   "Ceremonial Dagger" = "ceremonialDagger",
+                   "Daemon Scythe" = "daemonScythe",
+                   "Linked Espadon" = "linkedEspadon",
+                   "Thespian Hook" = "thespianHook",
+                   "Ozy's Hand" = "ozysHand",
+                   "Nemundis Oculus" = "nemundisOculus",
+                   "Uthos Gavel" = "uthosGavel",
+                   "Kickstarter Linked Espadon" = "kickstarterLinkedEspadon",
+                   "Disciple Ferula" = "discipleFerula",
+                   "Prodigial Spawn Ferula" = "prodigialSpawnFerula",
+                   "Deliberate Burden" = "deliberateBurden",
+                   "Thespian Mace" = "thespianMace",
+                   "Whalebone Halberd" = "whaleboneHalberd",
+                   "Winged Halberd" = "wingedHalberd"
+                                                                                )
+                           ),
+               selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation")),
+               numericInput("conductorLevelInput", "Conductor Level", value = "1")
+               
         ),
         column(3,
                p(strong("Weapon Scaling")),
@@ -40,14 +75,6 @@ ui <- fluidPage(
         )
     ),
     fluidRow(
-        column(3,
-               p(strong("Conductor Information")),
-               selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation")),
-               numericInput("conductorLevelInput", "Conductor Level", value = "1")
-        ),
-        column(9)
-    ),
-    fluidRow(
         column(12,
                p(strong("Made with love by KittySkin")),
                p(strong("With the help of Cradle Games")),
@@ -60,13 +87,51 @@ server <- function(input, output, session) {
     observeEvent(input$calculateButton,{
         #initial values to start working
         
+        switch (input$selectedWeapon,
+                "pipe" = stats <- c(12, 0, 0, 0, 0, 0),
+                "shard" = stats <- c(6, 0, 0, 0, 0, 0),
+                "column" = stats <- c(24, 0, 0, 0, 0, 0),
+                "infusedColumn" = stats <- c(24, 8, 0, 0, 0, 0),
+                "boneBat" = stats <- c(12, 0, 0, 0, 0, 0),
+                "scaryScooper" = stats <- c(6, 0, 0, 0, 0, 0),
+                "coffingCrusher" = stats <- c(24, 0, 0, 0, 0, 0),
+                "antiquatedGlaive" = stats <- c(16, 0, 0, 0, 0, 0),
+                "officerGlaive" = stats <- c(16, 0, 0, 0, 0, 0),
+                "officerTuleGlaive" = stats <- c(16, 4, 0, 0, 0, 0),
+                "heaterSpear" = stats <- c(24, 0, 0, 0, 0, 0),
+                "archonSpear" = stats <- c(20, 0, 0, 0, 0, 0),
+                "victimPoker" = stats <- c(16, 0, 0, 0, 0, 0),
+                "shreddingSaber" = stats <- c(16, 0, 0, 0, 0, 0),
+                "wastelandSaber" = stats <- c(16, 0, 0, 0, 0, 0),
+                "railPoignard" = stats <- c(8, 0, 0, 0, 0, 0),
+                "sewingAnlace" = stats <- c(8, 0, 0, 0, 0, 0),
+                "lightStriker" = stats <- c(16, 20, 0, 0, 0, 0),
+                "pryingTool" = stats <- c(12, 0, 0, 0, 0, 0),
+                "tomahawk" = stats <- c(8, 4, 0, 0, 0, 0),
+                "lostHatchet" = stats <- c(16, 0, 0, 0, 0, 0),
+                "ceremonialDagger" = stats <- c(8, 0, 0, 0, 0, 0),
+                "daemonScythe" = stats <- c(24, 0, 0, 0, 0, 0),
+                "linkedEspadon" = stats <- c(24, 0, 0, 0, 0, 0),
+                "thespianHook" = stats <- c(16, 0, 0, 0, 0, 0),
+                "ozysHand" = stats <- c(16, 0, 0, 0, 0, 0),
+                "nemundisOculus" = stats <- c(20, 0, 0, 0, 0, 0),
+                "uthosGavel" = stats <- c(40, 0, 0, 0, 8, 0),
+                "kickstarterLinkedEspadon" = stats <- c(20, 0, 0, 0, 0, 0),
+                "discipleFerula" = stats <- c(20, 0, 0, 0, 0, 0),
+                "prodigialSpawnFerula" = stats <- c(20, 0, 0, 0, 0, 0),
+                "deliberateBurden" = stats <- c(24, 0, 0, 0, 0, 0),
+                "thespianMace" = stats <- c(24, 0, 0, 0, 0, 0),
+                "whaleboneHalberd" = stats <- c(24, 0, 0, 0, 0, 0),
+                "wingedHalberd" = stats <- c(20, 0, 0, 0, 0, 0)
+        )
+        
         #weapon base damage
-        physicalDamage <<- input$physicalDamageInput
-        energyDamage <<- input$energyDamageInput
-        nihilDamage <<- input$nihilDamageInput
-        inductionDamage <<- input$inductionDamageInput
-        entropyDamage <<- input$entropyDamageInput
-        radiationDamage <<- input$radiationDamageInput
+        physicalDamage <<- stats[1]
+        energyDamage <<- stats[2]
+        nihilDamage <<- stats[3]
+        inductionDamage <<- stats[4]
+        entropyDamage <<- stats[5]
+        radiationDamage <<- stats[6]
         
         #weapon scaling stats
         bonusStrength <<- input$bonusStrengthInput
@@ -143,22 +208,22 @@ server <- function(input, output, session) {
         finalDamage <- weaponDamage + bonusDamage
         
         output$finalPhysicalDamage <- renderText({ 
-            paste("Physical Damage :", finalDamage[1])
+            paste("Physical Damage :", round(finalDamage[1]))
         })
         output$finalEnergyDamage <- renderText({ 
-            paste("Energy Damage :", finalDamage[2])
+            paste("Energy Damage :", round(finalDamage[2]))
         })
         output$finalNihilDamage <- renderText({ 
-            paste("Nihil Damage :", finalDamage[3])
+            paste("Nihil Damage :", round(finalDamage[3]))
         })
         output$finalInductionDamage <- renderText({ 
-            paste("Induction Damage :", finalDamage[4])
+            paste("Induction Damage :", round(finalDamage[4]))
         })
         output$finalEntropicDamage <- renderText({ 
-            paste("Entropic Damage :", finalDamage[5])
+            paste("Entropic Damage :", round(finalDamage[5]))
         })
         output$finalRadiationDamage <- renderText({ 
-            paste("Radiation Damage :", finalDamage[6])
+            paste("Radiation Damage :", round(finalDamage[6]))
         })
     })
     
