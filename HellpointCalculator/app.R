@@ -86,52 +86,44 @@ ui <- fluidPage(
 server <- function(input, output) {
     observeEvent(input$calculateButton,{
         #initial values to start working
-        
+        #load selected weapon and add the stats to weaponDamage variable to be operated in the calculations
         switch (input$selectedWeapon,
-                "pipe" = stats <- c(12, 0, 0, 0, 0, 0),
-                "shard" = stats <- c(6, 0, 0, 0, 0, 0),
-                "column" = stats <- c(24, 0, 0, 0, 0, 0),
-                "infusedColumn" = stats <- c(24, 8, 0, 0, 0, 0),
-                "boneBat" = stats <- c(12, 0, 0, 0, 0, 0),
-                "scaryScooper" = stats <- c(6, 0, 0, 0, 0, 0),
-                "coffingCrusher" = stats <- c(24, 0, 0, 0, 0, 0),
-                "antiquatedGlaive" = stats <- c(16, 0, 0, 0, 0, 0),
-                "officerGlaive" = stats <- c(16, 0, 0, 0, 0, 0),
-                "officerTuleGlaive" = stats <- c(16, 4, 0, 0, 0, 0),
-                "heaterSpear" = stats <- c(24, 0, 0, 0, 0, 0),
-                "archonSpear" = stats <- c(20, 0, 0, 0, 0, 0),
-                "victimPoker" = stats <- c(16, 0, 0, 0, 0, 0),
-                "shreddingSaber" = stats <- c(16, 0, 0, 0, 0, 0),
-                "wastelandSaber" = stats <- c(16, 0, 0, 0, 0, 0),
-                "railPoignard" = stats <- c(8, 0, 0, 0, 0, 0),
-                "sewingAnlace" = stats <- c(8, 0, 0, 0, 0, 0),
-                "lightStriker" = stats <- c(16, 20, 0, 0, 0, 0),
-                "pryingTool" = stats <- c(12, 0, 0, 0, 0, 0),
-                "tomahawk" = stats <- c(8, 4, 0, 0, 0, 0),
-                "lostHatchet" = stats <- c(16, 0, 0, 0, 0, 0),
-                "ceremonialDagger" = stats <- c(8, 0, 0, 0, 0, 0),
-                "daemonScythe" = stats <- c(24, 0, 0, 0, 0, 0),
-                "linkedEspadon" = stats <- c(24, 0, 0, 0, 0, 0),
-                "thespianHook" = stats <- c(16, 0, 0, 0, 0, 0),
-                "ozysHand" = stats <- c(16, 0, 0, 0, 0, 0),
-                "nemundisOculus" = stats <- c(20, 0, 0, 0, 0, 0),
-                "uthosGavel" = stats <- c(40, 0, 0, 0, 8, 0),
-                "kickstarterLinkedEspadon" = stats <- c(20, 0, 0, 0, 0, 0),
-                "discipleFerula" = stats <- c(20, 0, 0, 0, 0, 0),
-                "prodigialSpawnFerula" = stats <- c(20, 0, 0, 0, 0, 0),
-                "deliberateBurden" = stats <- c(24, 0, 0, 0, 0, 0),
-                "thespianMace" = stats <- c(24, 0, 0, 0, 0, 0),
-                "whaleboneHalberd" = stats <- c(24, 0, 0, 0, 0, 0),
-                "wingedHalberd" = stats <- c(20, 0, 0, 0, 0, 0)
+                "pipe" = weaponDamage <- c(12, 0, 0, 0, 0, 0),
+                "shard" = weaponDamage <- c(6, 0, 0, 0, 0, 0),
+                "column" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "infusedColumn" = weaponDamage <- c(24, 8, 0, 0, 0, 0),
+                "boneBat" = weaponDamage <- c(12, 0, 0, 0, 0, 0),
+                "scaryScooper" = weaponDamage <- c(6, 0, 0, 0, 0, 0),
+                "coffingCrusher" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "antiquatedGlaive" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "officerGlaive" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "officerTuleGlaive" = weaponDamage <- c(16, 4, 0, 0, 0, 0),
+                "heaterSpear" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "archonSpear" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "victimPoker" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "shreddingSaber" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "wastelandSaber" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "railPoignard" = weaponDamage <- c(8, 0, 0, 0, 0, 0),
+                "sewingAnlace" = weaponDamage <- c(8, 0, 0, 0, 0, 0),
+                "lightStriker" = weaponDamage <- c(16, 20, 0, 0, 0, 0),
+                "pryingTool" = weaponDamage <- c(12, 0, 0, 0, 0, 0),
+                "tomahawk" = weaponDamage <- c(8, 4, 0, 0, 0, 0),
+                "lostHatchet" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "ceremonialDagger" = weaponDamage <- c(8, 0, 0, 0, 0, 0),
+                "daemonScythe" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "linkedEspadon" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "thespianHook" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "ozysHand" = weaponDamage <- c(16, 0, 0, 0, 0, 0),
+                "nemundisOculus" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "uthosGavel" = weaponDamage <- c(40, 0, 0, 0, 8, 0),
+                "kickstarterLinkedEspadon" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "discipleFerula" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "prodigialSpawnFerula" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "deliberateBurden" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "thespianMace" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "whaleboneHalberd" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
+                "wingedHalberd" = weaponDamage <- c(20, 0, 0, 0, 0, 0)
         )
-        
-        #weapon base damage
-        physicalDamage <<- stats[1]
-        energyDamage <<- stats[2]
-        nihilDamage <<- stats[3]
-        inductionDamage <<- stats[4]
-        entropyDamage <<- stats[5]
-        radiationDamage <<- stats[6]
         
         #weapon scaling stats
         bonusStrength <<- input$bonusStrengthInput
@@ -152,10 +144,9 @@ server <- function(input, output) {
         #need more information on this, so will be set at 0.00 for the time being, supposedly be a value between 0.02 and 0.03
         conductorVariation <- 0.00
         
-        #create the vectors containing the character stats and weapon stats
+        #create the vectors containing the character stats and scaling stats
         characterStat <- c(characterStrength, characterReflex, characterCognition, characterForesight)
         weaponBonusStat <- c(bonusStrength, bonusReflex, bonusCognition, bonusForesight)
-        weaponDamage <- c(physicalDamage, energyDamage, nihilDamage, inductionDamage, entropyDamage, radiationDamage)
         
         #define the type of conductor and how the maths have to be done for it
         if (conductorType == "reflex" || conductorType == "strength" || conductorType == "martial"){
