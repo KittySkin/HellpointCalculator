@@ -1,0 +1,13 @@
+name: HellpointCalculator
+title: HellpointCalculator
+username:
+account: kittyskin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5003511
+bundleId: 5191500
+url: https://kittyskin.shinyapps.io/HellpointCalculator/
+when: 1635532814.32228
+lastSyncTime: 1635532814.32228
+asMultiple: FALSE
+asStatic: FALSE
