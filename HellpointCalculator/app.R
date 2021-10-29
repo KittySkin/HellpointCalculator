@@ -125,33 +125,17 @@ server <- function(input, output) {
                 "wingedHalberd" = weaponDamage <- c(20, 0, 0, 0, 0, 0)
         )
         
-        #weapon scaling stats
-        bonusStrength <<- input$bonusStrengthInput
-        bonusReflex <<- input$bonusReflexInput
-        bonusCognition <<- input$bonusCognitionInput
-        bonusForesight <<- input$bonusForesightInput
-        
-        #character stats
-        characterStrength <<- input$characterStrengthInput
-        characterReflex <<- input$characterReflexInput
-        characterCognition <<- input$characterCognitionInput
-        characterForesight <<- input$characterForesightInput
-        
-        #conductor values
-        #can be reflex, strength, martial, light, induction, radiation or none
-        conductorType <<- input$conductorTypeInput
-        conductorLevel <<- input$conductorLevelInput
         #need more information on this, so will be set at 0.00 for the time being, supposedly be a value between 0.02 and 0.03
         conductorVariation <- 0.00
         
         #create the vectors containing the character stats and scaling stats
-        characterStat <- c(characterStrength, characterReflex, characterCognition, characterForesight)
-        weaponBonusStat <- c(bonusStrength, bonusReflex, bonusCognition, bonusForesight)
+        characterStat <- c(input$characterStrengthInput, input$characterReflexInput, input$characterCognitionInput, input$characterForesightInput)
+        weaponBonusStat <- c(input$bonusStrengthInput, input$bonusReflexInput, input$bonusCognitionInput, input$bonusForesightInput)
         
         #define the type of conductor and how the maths have to be done for it
-        if (conductorType == "reflex" || conductorType == "strength" || conductorType == "martial"){
+        if (input$conductorTypeInput == "reflex" || input$conductorTypeInput == "strength" || input$conductorTypeInput == "martial"){
             conductorFormula <- "physical"
-        }else if(conductorType == "light" || conductorType == "induction" || conductorType == "radiation"){
+        }else if(input$conductorTypeInput == "light" || input$conductorTypeInput == "induction" || input$conductorTypeInput == "radiation"){
             conductorFormula <- "elemental"
         }else{
             conductorFormula <- "none"
@@ -160,9 +144,9 @@ server <- function(input, output) {
         #calculate variables, formula given by Cradle
         #define the conductor type used and use the formula relevant to it
         if (conductorFormula == "physical"){
-            conductorBonus <- conductorLevel * (1 + conductorVariation)
+            conductorBonus <- input$conductorLevelInput * (1 + conductorVariation)
         }else if (conductorFormula == "elemental"){
-            conductorBonus <- (conductorLevel * 0.02 + 1) ^ 3
+            conductorBonus <- (input$conductorLevelInput * 0.02 + 1) ^ 3
         }else{
             conductorBonus <- 0
         }
@@ -180,12 +164,12 @@ server <- function(input, output) {
             #get the reduced physical damage that its going to be added to the base elemental damage of the weapon
             weaponPhysToElemental <- weaponDamage[1]
             #do the elemental damage additions
-            switch(conductorType,
+            switch(input$conductorTypeInput,
                    "light" = (weaponDamage <- weaponDamage + c(0, weaponPhysToElemental, 0, 0, 0, 0)),
                    "induction" = (weaponDamage <- weaponDamage + c(0, 0, 0, weaponPhysToElemental, 0, 0)),
                    "radiation" = (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponPhysToElemental)))
             #now do the elemental damage multiplications based on conductorBonus
-            switch(conductorType,
+            switch(input$conductorTypeInput,
                    "light" = (weaponDamage <- weaponDamage * c(1, conductorBonus, 1, 1, 1, 1)),
                    "induction" = (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus, 1, 1)),
                    "radiation" = (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus)))
