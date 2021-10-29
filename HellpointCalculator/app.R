@@ -49,10 +49,27 @@ ui <- fluidPage(
                    "Deliberate Burden" = "deliberateBurden",
                    "Thespian Mace" = "thespianMace",
                    "Whalebone Halberd" = "whaleboneHalberd",
-                   "Winged Halberd" = "wingedHalberd"
+                   "Winged Halberd" = "wingedHalberd",
+                   "Kickstarter Railgun" = "kickstarterRailgun",
+                   "Railgun" = "railgun",
+                   "Entropic Railgun" = "entropicRailgun",
+                   "Marine Rifle" = "marineRifle",
+                   "Artillery P17" = "artilleryP17",
+                   "Artillery OTX" = "artilleryOTX",
+                   "Daemon Cannon" = "daemonCannon",
+                   "Mouth of Filth" = "mouthOfFilth",
+                   "Channeler of Hell" = "channelerOfHell",
+                   "Channeler of Light" = "channelerOfLight",
+                   "Etek Avos" = "etekAvos",
+                   "Hedron of Entropy" = "hedronOfEntropy",
+                   "Hedron of Flame" = "hedronOfFlame",
+                   "Hedron of Light" = "hedronOfLight",
+                   "White Prophet Hand" = "whiteProphetHand",
+                   "Amber Prophet Hand" = "amberProphetHand",
+                   "Nihil Prophet Hand" = "nihilProphetHand"
                                                                                 )
                            ),
-               selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation")),
+               selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation", "Firearm" = "firearm", "Catalyst" = "catalyst")),
                numericInput("conductorLevelInput", "Conductor Level", value = "1")
                
         ),
@@ -122,7 +139,24 @@ server <- function(input, output) {
                 "deliberateBurden" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
                 "thespianMace" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
                 "whaleboneHalberd" = weaponDamage <- c(24, 0, 0, 0, 0, 0),
-                "wingedHalberd" = weaponDamage <- c(20, 0, 0, 0, 0, 0)
+                "wingedHalberd" = weaponDamage <- c(20, 0, 0, 0, 0, 0),
+                "kickstarterRailgun" = weaponDamage <- c(0, 12, 0, 0, 0, 0),
+                "railgun" = weaponDamage <- c(0, 12, 0, 0, 0, 0),
+                "entropicRailgun" = weaponDamage <- c(0, 0, 0, 0, 12, 0),
+                "marineRifle" = weaponDamage <- c(0, 12, 0, 0, 0, 0),
+                "artilleryP17" = weaponDamage <- c(0, 0, 0, 36, 0, 0),
+                "artilleryOTX" = weaponDamage <- c(0, 0, 0, 0, 0, 36),
+                "daemonCannon" = weaponDamage <- c(0, 0, 0, 36, 0, 0),
+                "mouthOfFilth" = weaponDamage <- c(0, 0, 0, 0, 0, 36),
+                "channelerOfHell" = weaponDamage <- c(0, 0, 0, 36, 0, 0),
+                "channelerOfLight" = weaponDamage <- c(0, 36, 0, 0, 0, 0),
+                "etekAvos" = weaponDamage <- c(0, 0, 36, 0, 0, 0),
+                "hedronOfEntropy" = weaponDamage <- c(0, 0, 0, 0, 8, 0),
+                "hedronOfFlame" = weaponDamage <- c(0, 0, 0, 8, 0, 0),
+                "hedronOfLight" = weaponDamage <- c(0, 16, 0, 0, 0, 0),
+                "whiteProphetHand" = weaponDamage <- c(0, 24, 0, 0, 0, 0),
+                "amberProphetHand" = weaponDamage <- c(0, 0, 0, 24, 0, 0),
+                "nihilProphetHand" = weaponDamage <- c(0, 0, 24, 0, 0, 0)
         )
         
         #need more information on this, so will be set at 0.00 for the time being, supposedly be a value between 0.02 and 0.03
@@ -137,19 +171,23 @@ server <- function(input, output) {
             conductorFormula <- "physical"
         }else if(input$conductorTypeInput == "light" || input$conductorTypeInput == "induction" || input$conductorTypeInput == "radiation"){
             conductorFormula <- "elemental"
+        }else if(input$conductorTypeInput == "firearm" || input$conductorTypeInput == "catalyst"){
+            conductorFormula <- "special"
         }else{
             conductorFormula <- "none"
         }
-        
         #calculate variables, formula given by Cradle
         #define the conductor type used and use the formula relevant to it
         if (conductorFormula == "physical"){
             conductorBonus <- input$conductorLevelInput * (1 + conductorVariation)
         }else if (conductorFormula == "elemental"){
             conductorBonus <- (input$conductorLevelInput * 0.02 + 1) ^ 3
+        }else if (conductorFormula == "special"){
+            conductorBonus <- input$conductorLevelInput * (1)
         }else{
             conductorBonus <- 0
         }
+            
         
         #function to calculate bonus stats for the weapon
         b <- clamp((log10(weaponBonusStat + 0.1) * 0.96), 0, 4)
@@ -157,7 +195,7 @@ server <- function(input, output) {
         
         #calculate base damage based on conductor and weapon stats
         if (conductorFormula == "physical"){
-            weaponDamage <- weaponDamage * c(conductorBonus, 0, 0, 0, 0, 0)
+            weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
         }else if(conductorFormula == "elemental"){
             #reduce base physical damage by to 66% of its original value
             weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
@@ -173,6 +211,8 @@ server <- function(input, output) {
                    "light" = (weaponDamage <- weaponDamage * c(1, conductorBonus, 1, 1, 1, 1)),
                    "induction" = (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus, 1, 1)),
                    "radiation" = (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus)))
+        }else if(conductorFormula == "special"){
+            weaponDamage <- weaponDamage * c(conductorBonus, conductorBonus, conductorBonus, conductorBonus, conductorBonus, conductorBonus)
         }
         
         #calculate the final damage of the weapon
