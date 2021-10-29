@@ -5,9 +5,9 @@ account: kittyskin
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5003511
-bundleId: 5191500
+bundleId: 5191735
 url: https://kittyskin.shinyapps.io/HellpointCalculator/
-when: 1635532814.32228
-lastSyncTime: 1635532814.32228
+when: 1635537636.46105
+lastSyncTime: 1635537636.46105
 asMultiple: FALSE
 asStatic: FALSE

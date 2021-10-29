@@ -83,7 +83,7 @@ ui <- fluidPage(
     )
 )
 
-server <- function(input, output, session) {
+server <- function(input, output) {
     observeEvent(input$calculateButton,{
         #initial values to start working
         
