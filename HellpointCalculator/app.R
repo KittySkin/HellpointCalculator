@@ -100,7 +100,7 @@ ui <- fluidPage(
     )
 )
 
-server <- function(input, output) {
+server <- function(input, output, session) {
     observeEvent(input$calculateButton,{
         #initial values to start working
         #load selected weapon and add the stats to weaponDamage variable to be operated in the calculations
@@ -240,6 +240,9 @@ server <- function(input, output) {
         output$finalRadiationDamage <- renderText({ 
             paste("Radiation Damage :", round(finalDamage[6]))
         })
+    })
+    session$onSessionEnded(function() {
+        stopApp()
     })
     
 }
