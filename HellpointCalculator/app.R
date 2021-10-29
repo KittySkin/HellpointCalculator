@@ -157,7 +157,7 @@ server <- function(input, output) {
         
         #calculate base damage based on conductor and weapon stats
         if (conductorFormula == "physical"){
-            weaponDamage <- weaponDamage + c(conductorBonus, 0, 0, 0, 0, 0)
+            weaponDamage <- weaponDamage * c(conductorBonus, 0, 0, 0, 0, 0)
         }else if(conductorFormula == "elemental"){
             #reduce base physical damage by to 66% of its original value
             weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
