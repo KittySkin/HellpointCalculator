@@ -204,9 +204,9 @@ server <- function(input, output, session) {
                    "radiation" = (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponElementalPortion)))
             #now do the elemental damage multiplications based on conductorBonus
             switch(input$conductorTypeInput,
-                   "light" = (weaponDamage <- weaponDamage * c(1, conductorBonus, 1, 1, 1, 1)),
-                   "induction" = (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus, 1, 1)),
-                   "radiation" = (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus)))
+                   "light" = (weaponDamage <- weaponDamage * c(1, conductorBonus * 0.66, 1, 1, 1, 1)),
+                   "induction" = (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus * 0.66, 1, 1)),
+                   "radiation" = (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus * 0.66)))
         }else if(conductorFormula == "special"){
             weaponDamage <- weaponDamage * c(conductorBonus, conductorBonus, conductorBonus, conductorBonus, conductorBonus, conductorBonus)
         }
