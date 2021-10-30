@@ -178,19 +178,15 @@ server <- function(input, output, session) {
         }
         #calculate variables, formula given by Cradle
         #define the conductor type used and use the formula relevant to it
-        if (conductorFormula == "physical"){
-            conductorBonus <- input$conductorLevelInput * (1 + conductorVariation)
-        }else if (conductorFormula == "elemental"){
-            conductorBonus <- (input$conductorLevelInput * 0.02 + 1) ^ 3
-        }else if (conductorFormula == "special"){
-            conductorBonus <- input$conductorLevelInput * (1)
+        if (conductorFormula != "none"){
+            conductorBonus <- ((input$conductorLevelInput * 0.02) + 1) ^ 3
         }else{
             conductorBonus <- 0
         }
             
         
         #function to calculate bonus stats for the weapon
-        b <- clamp((log10(weaponBonusStat + 0.1) * 0.96), 0, 4)
+        b <- clamp((log10((weaponBonusStat/100) + 0.1) + 1) * 0.96, 0, 4)
         l <- log10(characterStat + 10) * 1.3 - 1.3
         
         #calculate base damage based on conductor and weapon stats
@@ -198,14 +194,14 @@ server <- function(input, output, session) {
             weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
         }else if(conductorFormula == "elemental"){
             #reduce base physical damage by to 66% of its original value
+            originalWeaponDamage <- weaponDamage
             weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
-            #get the reduced physical damage that its going to be added to the base elemental damage of the weapon
-            weaponPhysToElemental <- weaponDamage[1]
+            weaponElementalPortion <- originalWeaponDamage[1] * 0.66
             #do the elemental damage additions
             switch(input$conductorTypeInput,
-                   "light" = (weaponDamage <- weaponDamage + c(0, weaponPhysToElemental, 0, 0, 0, 0)),
-                   "induction" = (weaponDamage <- weaponDamage + c(0, 0, 0, weaponPhysToElemental, 0, 0)),
-                   "radiation" = (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponPhysToElemental)))
+                   "light" = (weaponDamage <- weaponDamage + c(0, weaponElementalPortion, 0, 0, 0, 0)),
+                   "induction" = (weaponDamage <- weaponDamage + c(0, 0, 0, weaponElementalPortion, 0, 0)),
+                   "radiation" = (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponElementalPortion)))
             #now do the elemental damage multiplications based on conductorBonus
             switch(input$conductorTypeInput,
                    "light" = (weaponDamage <- weaponDamage * c(1, conductorBonus, 1, 1, 1, 1)),
@@ -217,10 +213,12 @@ server <- function(input, output, session) {
         
         #calculate the final damage of the weapon
         #get the new b and l values and create a new vector that can be used to work with weaponDamage
-        weaponBValue <- c(b[1] + b[2], b[3] + b[4], b[3] + b[4], b[3] + b[4], b[3] + b[4], b[3] + b[4])
-        characterLvalue <- c(l[1] + l[2], l[3] + l[4], l[3] + l[4], l[3] + l[4], l[3] + l[4], l[3] + l[4])
-        bonusDamage <- characterLvalue * weaponBValue * weaponDamage
-        finalDamage <- weaponDamage + bonusDamage
+        
+        bonusDamageByStrength <- c(b[1], 0, 0, 0, 0, 0) * c(l[1], 0, 0, 0, 0, 0) * weaponDamage
+        bonusDamageByReflex <- c(b[2], 0, 0, 0, 0, 0) * c(l[2], 0, 0, 0, 0, 0) * weaponDamage
+        bonusDamageByCognition <- c(0, b[3], b[3], b[3], b[3], b[3]) * c(0, l[3], l[3], l[3], l[3], l[3]) * weaponDamage
+        bonusDamageByForesight <- c(0, b[4], b[4], b[4], b[4], b[4]) * c(0, l[4], l[4], l[4], l[4], l[4]) * weaponDamage
+        finalDamage <- weaponDamage + bonusDamageByStrength + bonusDamageByReflex + bonusDamageByCognition + bonusDamageByForesight
         
         output$finalPhysicalDamage <- renderText({ 
             paste("Physical Damage :", round(finalDamage[1]))
