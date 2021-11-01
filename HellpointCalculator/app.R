@@ -6,14 +6,15 @@ ui <- fluidPage(
     titlePanel("Hellpoint Calculator"),
     fluidRow(
         column(3,
-               p(strong("Character Stats")),
+               wellPanel(
+               p(strong("Character Stats:")),
                numericInput("characterStrengthInput", "Character Strength", value = "1"),
                numericInput("characterReflexInput", "Character Reflex", value = "1"),
                numericInput("characterCognitionInput", "Character Cognition", value = "1"),
-               numericInput("characterForesightInput", "Character Foresight", value = "1")
+               numericInput("characterForesightInput", "Character Foresight", value = "1"))
         ),
-        column(3,
-               p(strong("Weapon Information")),
+        column(3,wellPanel(
+               p(strong("Weapon Information:")),
                selectInput("selectedWeapon", "Select Weapon", choices = c(
                    "Pipe" = "pipe",
                    "Shard" = "shard",
@@ -69,33 +70,39 @@ ui <- fluidPage(
                    "Nihil Prophet Hand" = "nihilProphetHand"
                                                                                 )
                            ),
+               p(strong("Conductor Information:")),
                selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation", "Firearm" = "firearm", "Catalyst" = "catalyst")),
-               numericInput("conductorLevelInput", "Conductor Level", value = "1")
+               numericInput("conductorLevelInput", "Conductor Level", value = "1"))
                
         ),
         column(3,
-               p(strong("Weapon Scaling")),
+               wellPanel(
+               p(strong("Weapon Scaling:")),
                numericInput("bonusStrengthInput", "Bonus Strength", value = "0"),
                numericInput("bonusReflexInput", "Bonus Reflex", value = "0"),
                numericInput("bonusCognitionInput", "Bonus Cognition", value = "0"),
-               numericInput("bonusForesightInput", "Bonus Foresight", value = "0")
+               numericInput("bonusForesightInput", "Bonus Foresight", value = "0"))
         ),
         column(3,
-               p(strong("Weapon Damage")),
-               textOutput("finalPhysicalDamage"),
-               textOutput("finalEnergyDamage"),
-               textOutput("finalNihilDamage"),
-               textOutput("finalInductionDamage"),
-               textOutput("finalEntropicDamage"),
-               textOutput("finalRadiationDamage"),
-               actionButton("calculateButton", "Calculate")
+               wellPanel(
+               p(strong("Weapon Damage:")),
+               p(("Physical Damage: "), textOutput("finalPhysicalDamage", inline = T)),
+               p(("Energy Damage: "), textOutput("finalEnergyDamage", inline = T)),
+               p(("Nihil Damage: "), textOutput("finalNihilDamage", inline = T)),
+               p(("Induction Damage: "), textOutput("finalInductionDamage", inline = T)),
+               p(("Entropic Damage: "), textOutput("finalEntropicDamage", inline = T)),
+               p(("Radiation Damage: "), textOutput("finalRadiationDamage", inline = T)),
+               br(),
+               actionButton("calculateButton", "Calculate"))
         )
     ),
     fluidRow(
-        column(12,
+        column(12, align="center",
+               wellPanel(
                p(strong("Made with love by KittySkin")),
                p(strong("With the help of Cradle Games")),
-               p(strong("And the support and help of Patkin"))
+               p(strong("And the support and help of Patkin")),
+               a("Source Here!", href="https://github.com/KittySkin/HellpointCalculator", target="_blank"))
         )
     )
 )
@@ -197,10 +204,14 @@ server <- function(input, output, session) {
         #then, if the conductor its a physical one (reflex, strength or martial), weapon damage its multiplied by 100% of conductorBonus
         #if conductor its elemental, weapon physical damage gets reduced to 66% and the resulting value its added to the weapon as base elemental damage
         #elemental damage its multiplied by 66% of conductorBonus.
-        #seems that weapons with innate elemental damage uses a separate formula, currently investigating.
+        #elemental weapons use 94% of base physical damage (weaponDamage[1]) for physical conductors instead of 100% like regular ones.
         #calculate base damage based on conductor and weapon stats
         if (conductorFormula == "physical"){
-            weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
+            if (weaponDamage[2] > 0 || weaponDamage[3] > 0 || weaponDamage[4] > 0 || weaponDamage[5] > 0 || weaponDamage[6] > 0){
+                weaponDamage <- weaponDamage * c(conductorBonus * 0.94, 1, 1, 1, 1, 1)
+            }else{
+                weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
+            }
         }else if(conductorFormula == "elemental"){
             #reduce base physical damage by to 66% of its original value
             #store original weapon damage to be used later, just in case
@@ -235,22 +246,22 @@ server <- function(input, output, session) {
         
         #display the final weapon damage on the UI
         output$finalPhysicalDamage <- renderText({ 
-            paste("Physical Damage :", round(finalDamage[1]))
+            paste(round(finalDamage[1]))
         })
         output$finalEnergyDamage <- renderText({ 
-            paste("Energy Damage :", round(finalDamage[2]))
+            paste(round(finalDamage[2]))
         })
         output$finalNihilDamage <- renderText({ 
-            paste("Nihil Damage :", round(finalDamage[3]))
+            paste(round(finalDamage[3]))
         })
         output$finalInductionDamage <- renderText({ 
-            paste("Induction Damage :", round(finalDamage[4]))
+            paste(round(finalDamage[4]))
         })
         output$finalEntropicDamage <- renderText({ 
-            paste("Entropic Damage :", round(finalDamage[5]))
+            paste(round(finalDamage[5]))
         })
         output$finalRadiationDamage <- renderText({ 
-            paste("Radiation Damage :", round(finalDamage[6]))
+            paste(round(finalDamage[6]))
         })
     })
     #kill app once session its closed in order to reduce server usage
