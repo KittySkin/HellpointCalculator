@@ -7,14 +7,14 @@ ui <- fluidPage(
     fluidRow(
         column(3,
                wellPanel(
-               p(strong("Character Stats:")),
+               h4(strong("Character Stats")),
                numericInput("characterStrengthInput", "Character Strength", value = "1"),
                numericInput("characterReflexInput", "Character Reflex", value = "1"),
                numericInput("characterCognitionInput", "Character Cognition", value = "1"),
                numericInput("characterForesightInput", "Character Foresight", value = "1"))
         ),
         column(3,wellPanel(
-               p(strong("Weapon Information:")),
+               h4(strong("Weapon Information")),
                selectInput("selectedWeapon", "Select Weapon", choices = c(
                    "Pipe" = "pipe",
                    "Shard" = "shard",
@@ -70,14 +70,14 @@ ui <- fluidPage(
                    "Nihil Prophet Hand" = "nihilProphetHand"
                                                                                 )
                            ),
-               p(strong("Conductor Information:")),
+               h4(strong("Conductor Information")),
                selectInput("conductorTypeInput", "Conductor Type", choices = c("None" = "none", "Reflex" = "reflex", "Strength" = "strength", "Martial" = "martial", "Light" = "light", "Induction" = "induction", "Radiation" = "radiation", "Firearm" = "firearm", "Catalyst" = "catalyst")),
                numericInput("conductorLevelInput", "Conductor Level", value = "1"))
                
         ),
         column(3,
                wellPanel(
-               p(strong("Weapon Scaling:")),
+               h4(strong("Weapon Scaling")),
                numericInput("bonusStrengthInput", "Bonus Strength", value = "0"),
                numericInput("bonusReflexInput", "Bonus Reflex", value = "0"),
                numericInput("bonusCognitionInput", "Bonus Cognition", value = "0"),
@@ -85,7 +85,7 @@ ui <- fluidPage(
         ),
         column(3,
                wellPanel(
-               p(strong("Weapon Damage:")),
+               h4(strong("Weapon Damage")),
                p(("Physical Damage: "), textOutput("finalPhysicalDamage", inline = T)),
                p(("Energy Damage: "), textOutput("finalEnergyDamage", inline = T)),
                p(("Nihil Damage: "), textOutput("finalNihilDamage", inline = T)),
