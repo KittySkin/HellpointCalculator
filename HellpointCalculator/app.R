@@ -8,10 +8,10 @@ ui <- fluidPage(
         column(3,
                wellPanel(
                h4(strong("Character Stats")),
-               numericInput("characterStrengthInput", "Character Strength", value = "1"),
-               numericInput("characterReflexInput", "Character Reflex", value = "1"),
-               numericInput("characterCognitionInput", "Character Cognition", value = "1"),
-               numericInput("characterForesightInput", "Character Foresight", value = "1"))
+               numericInput("characterStrengthInput", "Strength", value = "1"),
+               numericInput("characterReflexInput", "Reflex", value = "1"),
+               numericInput("characterCognitionInput", "Cognition", value = "1"),
+               numericInput("characterForesightInput", "Foresight", value = "1"))
         ),
         column(3,wellPanel(
                h4(strong("Weapon Information")),
@@ -77,11 +77,11 @@ ui <- fluidPage(
         ),
         column(3,
                wellPanel(
-               h4(strong("Weapon Scaling")),
-               numericInput("bonusStrengthInput", "Bonus Strength", value = "0"),
-               numericInput("bonusReflexInput", "Bonus Reflex", value = "0"),
-               numericInput("bonusCognitionInput", "Bonus Cognition", value = "0"),
-               numericInput("bonusForesightInput", "Bonus Foresight", value = "0"))
+               h4(strong("Weapon Bonus Stats")),
+               numericInput("bonusStrengthInput", "Strength", value = "0"),
+               numericInput("bonusReflexInput", "Reflex", value = "0"),
+               numericInput("bonusCognitionInput", "Cognition", value = "0"),
+               numericInput("bonusForesightInput", "Foresight", value = "0"))
         ),
         column(3,
                wellPanel(
@@ -94,6 +94,19 @@ ui <- fluidPage(
                p(("Radiation Damage: "), textOutput("finalRadiationDamage", inline = T)),
                br(),
                actionButton("calculateButton", "Calculate"))
+        )
+    ),
+    fluidRow(
+        column(12, align="center",
+               wellPanel(
+                   h4(strong("How to use:")),
+                   p("Input your character stats on the first column."),
+                   p("Then select your weapon and if using a conductor, the conductor type and level."),
+                   p("On the weapon bonus section, input the weapon current bonus stats."),
+                   p("If you are testing conductors, remember to update the bonus values to reflect the conductor used."),
+                   p("Press calculate and see how it goes."),
+                   p("Accuracy its 99%, some stats are a bit off not showing the exact same value as in game.")
+                   )
         )
     ),
     fluidRow(
