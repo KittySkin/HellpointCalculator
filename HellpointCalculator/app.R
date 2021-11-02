@@ -219,51 +219,60 @@ server <- function(input, output, session) {
         #elemental damage its multiplied by 66% of conductorBonus.
         #elemental weapons use 94% of base physical damage (weaponDamage[1]) for physical conductors instead of 100% like regular ones.
         #calculate base damage based on conductor and weapon stats
+        #set weapon type to be used on further formulas
+        if (weaponDamage[2] > 0 || weaponDamage[3] > 0 || weaponDamage[4] > 0 || weaponDamage[5] > 0 || weaponDamage[6] > 0){
+            weaponType = "elemental"
+            physicalExtra = 0
+        }else{
+            weaponType = "physical"
+            physicalExtra = 0.03
+        }
         if (conductorFormula == "physical"){
             #check for elemental or physical weapons and reduce base physical damage on elemental ones
-            if (weaponDamage[2] > 0 || weaponDamage[3] > 0 || weaponDamage[4] > 0 || weaponDamage[5] > 0 || weaponDamage[6] > 0){
+            if (weaponType = "elemental"){
                 weaponDamage <- weaponDamage * c(conductorBonus * 0.94, 1, 1, 1, 1, 1)
-                weaponType <- "elemental"
             }else{
                 weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
-                weaponType <- "physical"
             }
         }else if(conductorFormula == "elemental"){
             #reduce base physical damage by to 66% of its original value
             #store original weapon damage to be used later, just in case
             originalWeaponDamage <- weaponDamage
-            if (weaponDamage[2] > 0 || weaponDamage[3] > 0 || weaponDamage[4] > 0 || weaponDamage[5] > 0 || weaponDamage[6] > 0){
-                weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
-                weaponType <- "elemental"
-            }else{
-                weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
-                weaponType <- "physical"
-                
-            }
-            #check for elemental or physical weapons and store 100% damage for elemental ones or 66% for physical ones
-            if (weaponType == "elemental"){
-                weaponElementalPortion <- originalWeaponDamage[1]
-            }else{
-                weaponElementalPortion <- originalWeaponDamage[1] * 0.66
-            }
+            weaponDamage <- weaponDamage * c(0.66, 1, 1, 1, 1, 1)
+            
+            #add originalWeaponDamage[1] (physical damage) to a new variable to be used in the physical to elemental convertion
+            #it is based on the base element of the weapon, where non aligned base elements use 66% while base element aligned ones use 100%
+            weaponElementalPortion <- originalWeaponDamage[1]
             #do the elemental damage additions based on the obtained weaponElementalPortion
             switch(input$conductorTypeInput,
-                   "light" = (weaponDamage <- weaponDamage + c(0, weaponElementalPortion, 0, 0, 0, 0)),
-                   "induction" = (weaponDamage <- weaponDamage + c(0, 0, 0, weaponElementalPortion, 0, 0)),
-                   "radiation" = (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponElementalPortion)))
+                   "light" =  if (originalWeaponDamage[2] > 0){
+                       (weaponDamage <- weaponDamage + c(0, weaponElementalPortion, 0, 0, 0, 0))
+                   }else{
+                       (weaponDamage <- weaponDamage + c(0, weaponElementalPortion * (0.63 + physicalExtra), 0, 0, 0, 0))  
+                   },
+                   "induction" = if (originalWeaponDamage[4] > 0){
+                       (weaponDamage <- weaponDamage + c(0, 0, 0, weaponElementalPortion, 0, 0))
+                   }else{
+                       (weaponDamage <- weaponDamage + c(0, 0, 0, weaponElementalPortion * (0.63 + physicalExtra), 0, 0)) 
+                   },
+                   "radiation" = if (originalWeaponDamage[6] > 0){
+                       (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponElementalPortion))
+                   }else{
+                       (weaponDamage <- weaponDamage + c(0, 0, 0, 0, 0, weaponElementalPortion * (0.63 + physicalExtra))) 
+                   })
             #now do the elemental damage multiplications based on 66% of conductorBonus
             switch(input$conductorTypeInput,
-                   "light" = if (weaponType == "elemental"){
+                   "light" = if (originalWeaponDamage[2] > 0){
                        (weaponDamage <- weaponDamage * c(1, conductorBonus * 0.74, 1, 1, 1, 1))
                    }else{
                        (weaponDamage <- weaponDamage * c(1, conductorBonus * 0.66, 1, 1, 1, 1))
                    },
-                   "induction" = if (weaponType == "elemental"){
+                   "induction" = if (originalWeaponDamage[4] > 0){
                        (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus * 0.74, 1, 1))
                    }else{
                        (weaponDamage <- weaponDamage * c(1, 1, 1, conductorBonus * 0.66, 1, 1))
                    },
-                   "radiation" = if (weaponType == "elemental"){
+                   "radiation" = if (originalWeaponDamage[6] > 0){
                        (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus * 0.74))
                    }else{
                        (weaponDamage <- weaponDamage * c(1, 1, 1, 1, 1, conductorBonus * 0.66))
