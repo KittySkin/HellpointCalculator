@@ -229,7 +229,7 @@ server <- function(input, output, session) {
         }
         if (conductorFormula == "physical"){
             #check for elemental or physical weapons and reduce base physical damage on elemental ones
-            if (weaponType = "elemental"){
+            if (weaponType == "elemental"){
                 weaponDamage <- weaponDamage * c(conductorBonus * 0.94, 1, 1, 1, 1, 1)
             }else{
                 weaponDamage <- weaponDamage * c(conductorBonus, 1, 1, 1, 1, 1)
